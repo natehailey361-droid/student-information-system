@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Information System</title>
+
+<style>
+:root {
+  --purple: #663399;
+  --dark-purple: #35145c;
+  --green: #24864b;
+  --gold: #e7b83f;
+  --red: #b93242;
+  --white: #ffffff;
+  --light: #f5f0fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--light);
+  color: #29213a;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 11px 17px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+button:disabled, input:disabled {
+  cursor: not-allowed;
+}
+
+.primary {
+  background: var(--purple);
+  color: white;
+}
+
+.green {
+  background: var(--green);
+  color: white;
+}
+
+.gold {
+  background: var(--gold);
+  color: #342400;
+}
+
+.gray {
+  background: #e6e1ed;
+  color: #342b40;
+}
+
+.danger {
+  background: var(--red);
+  color: white;
+}
+
+header {
+  background: var(--dark-purple);
+  color: white;
+  padding: 18px;
+  text-align: center;
+  border-bottom: 5px solid var(--gold);
+}
+
+header h1 {
+  margin: 5px;
+}
+
+.page {
+  display: none;
+  max-width: 950px;
+  margin: 30px auto;
+  padding: 25px;
+}
+
+.page.active {
+  display: block;
+}
+
+.page.welcome.active {
+  min-height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel {
+  background: white;
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px #00000015;
+  margin-bottom: 20px;
+}
+
+.center {
+  text-align: center;
+}
+
+.welcome-card {
+  width: 100%;
+  max-width: 650px;
+  padding: 45px 25px;
+  text-align: center;
+  background: white;
+  border-radius: 20px;
+  border-top: 9px solid var(--gold);
+  box-shadow: 0 8px 25px #00000020;
+}
+
+.welcome-card h1 {
+  color: var(--purple);
+  font-size: 38px;
+}
+
+.start-button {
+  font-size: 22px;
+  padding: 16px 55px;
+  margin-top: 20px;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cfc6dc;
+  border-radius: 8px;
+  margin: 7px 0 15px;
+}
+
+label {
+  font-weight: bold;
+}
+
+.menu-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.menu-buttons button {
+  flex: 1;
+  min-width: 140px;
+}
+
+.person-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.person-name {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.attendance-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Mini Check & X Boxes */
+.mini-box {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 6px;
+  border: 2px solid #cfc6dc;
+  background: #f9f7fc;
+  color: #777;
+  font-size: 17px;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.mini-box.check-box.selected {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+  box-shadow: 0 2px 6px rgba(36, 134, 75, 0.35);
+}
+
+.mini-box.x-box.selected {
+  background: var(--red);
+  border-color: var(--red);
+  color: white;
+  box-shadow: 0 2px 6px rgba(185, 50, 66, 0.35);
+}
+
+.mini-box:disabled {
+  opacity: 0.7;
+}
+
+.status-label {
+  min-width: 85px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.actions {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.small {
+  padding: 7px 10px;
+  font-size: 13px;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: bold;
+  background: var(--light);
+  color: var(--purple);
+  margin-left: 6px;
+}
+
+.reset-timer-badge {
+  display: inline-block;
+  background: #f5f0fb;
+  color: #35145c;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--gold);
+}
+
+.goodbye-card {
+  width: 100%;
+  max-width: 650px;
+  background: white;
+  border-radius: 20px;
+  padding: 55px 20px;
+  text-align: center;
+  border-bottom: 9px solid var(--gold);
+  box-shadow: 0 8px 25px #00000020;
+}
+
+.goodbye-card h1 {
+  font-size: clamp(45px, 9vw, 75px);
+  color: var(--purple);
+  margin: 10px 0;
+}
+
+.back-button {
+  font-size: 15px;
+  padding: 11px 22px;
+  margin-top: 20px;
+}
+
+.note {
+  color: #665b73;
+  font-size: 13px;
+}
+
+@media(max-width:600px) {
+  .page { padding: 12px; }
+  .welcome-card h1 { font-size: 29px; }
+  .person-row { align-items: center; }
+}
+</style>
+
+<script>
+const RESET_DURATION_MS = 15 * 60 * 60 * 1000; // 15 hours in milliseconds
+
+const defaultPeople = {
+  classmates: [
+    "Alex Santos",
+    "Jamie Cruz",
+    "Taylor Reyes",
+    "Sofia Mendoza",
+    "Liam Villanueva",
+    "Chloe Bautista",
+    "Ethan Navarro",
+    "Mia Torres"
+  ],
+  teachers: [
+    "Mr. Garcia",
+    "Ms. Dela Cruz",
+    "Mrs. Ramos",
+    "Mr. Aquino"
+  ]
+};
+
+const defaultUsers = [
+  { name: "Administrator", username: "admin", password: "admin123", role: "Admin" },
+  { name: "Teacher Account", username: "teacher", password: "teach123", role: "Teacher" },
+  { name: "Student Account", username: "student", password: "stud123", role: "Student" }
+];
+
+function loadData(key, fallback) {
+  try {
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(fallback));
+  } catch (error) {
+    return JSON.parse(JSON.stringify(fallback));
+  }
+}
+
+function checkAttendanceExpiration() {
+  const savedTime = localStorage.getItem("sis_attendance_timestamp");
+  if (savedTime) {
+    const elapsed = Date.now() - Number(savedTime);
+    if (elapsed >= RESET_DURATION_MS) {
+      attendance = {};
+      localStorage.removeItem("sis_attendance");
+      localStorage.removeItem("sis_attendance_timestamp");
+      return true;
+    }
+  }
+  return false;
+}
+
+let people = loadData("sis_people", defaultPeople);
+let users = loadData("sis_users", defaultUsers);
+let attendance = loadData("sis_attendance", {});
+checkAttendanceExpiration();
+
+let currentUser = null;
+let currentGroup = "classmates";
+
+function saveData() {
+  localStorage.setItem("sis_people", JSON.stringify(people));
+  localStorage.setItem("sis_users", JSON.stringify(users));
+  localStorage.setItem("sis_attendance", JSON.stringify(attendance));
+
+  // Start the 15-hour countdown when attendance data exists and no timer is active
+  if (Object.keys(attendance).length > 0 && !localStorage.getItem("sis_attendance_timestamp")) {
+    localStorage.setItem("sis_attendance_timestamp", String(Date.now()));
+  }
+}
+
+function updateResetTimerText() {
+  const banner = document.getElementById("resetTimerBanner");
+  if (!banner) return;
+
+  const savedTime = localStorage.getItem("sis_attendance_timestamp");
+  if (!savedTime) {
+    banner.textContent = "Auto-Reset: Attendance automatically resets 15 hours after being marked.";
+    return;
+  }
+
+  const remainingMs = RESET_DURATION_MS - (Date.now() - Number(savedTime));
+  if (remainingMs <= 0) {
+    checkAttendanceExpiration();
+    renderAttendance();
+    banner.textContent = "Attendance has been automatically reset after 15 hours.";
+    return;
+  }
+
+  const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+  const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+  banner.textContent = `Auto-Reset in: ${hours}h ${minutes}m`;
+}
+
+function isAdmin() {
+  return Boolean(currentUser && currentUser.role === "Admin");
+}
+
+function isTeacher() {
+  return Boolean(currentUser && currentUser.role === "Teacher");
+}
+
+function isStudent() {
+  return Boolean(currentUser && currentUser.role === "Student");
+}
+
+function showPage(pageId) {
+  if (pageId === "managePage" && !isAdmin()) {
+    alert("Access denied: Only Admins can add or edit names.");
+    return;
+  }
+
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
+  document.getElementById(pageId).classList.add("active");
+}
+
+function login() {
+  const username = document.getElementById("loginUsername").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  const user = users.find(u =>
+    u.username === username && u.password === password
+  );
+
+  if (!user) {
+    document.getElementById("loginMessage").textContent =
+      "Incorrect username or password.";
+    return;
+  }
+
+  currentUser = user;
+  document.getElementById("loginMessage").textContent = "";
+
+  if (user.role === "Admin") {
+    document.getElementById("adminWelcomeUser").innerHTML =
+      `Welcome, <strong>${user.name}</strong> <span class="role-badge">${user.role}</span>`;
+    showPage("adminDashboardPage");
+  } else if (user.role === "Teacher") {
+    document.getElementById("teacherWelcomeUser").innerHTML =
+      `Welcome, <strong>${user.name}</strong> <span class="role-badge">${user.role}</span>`;
+    showPage("teacherDashboardPage");
+  } else {
+    document.getElementById("studentWelcomeUser").innerHTML =
+      `Welcome, <strong>${user.name}</strong> <span class="role-badge">${user.role}</span>`;
+    showPage("studentDashboardPage");
+  }
+}
+
+function register() {
+  const name = document.getElementById("regName").value.trim();
+  const username = document.getElementById("regUsername").value.trim();
+  const password = document.getElementById("regPassword").value;
+
+  if (!name || !username || !password) {
+    document.getElementById("registerMessage").textContent =
+      "Please complete all fields.";
+    return;
+  }
+
+  if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+    document.getElementById("registerMessage").textContent =
+      "That username is already taken.";
+    return;
+  }
+
+  users.push({
+    name: name,
+    username: username,
+    password: password,
+    role: "Student"
+  });
+
+  saveData();
+
+  document.getElementById("registerMessage").textContent =
+    "Registration successful! You can now log in as a Student.";
+
+  document.getElementById("regName").value = "";
+  document.getElementById("regUsername").value = "";
+  document.getElementById("regPassword").value = "";
+}
+
+function logout() {
+  currentUser = null;
+  document.getElementById("loginPassword").value = "";
+  showPage("homePage");
+}
+
+function openManagePage() {
+  if (!isAdmin()) {
+    alert("Only Admins can add or change classmate and teacher names.");
+    return;
+  }
+  document.getElementById("newName").value = "";
+  renderPeople();
+  showPage("managePage");
+}
+
+function openAttendance(group) {
+  if (!currentUser) return;
+
+  checkAttendanceExpiration();
+  currentGroup = group;
+
+  document.getElementById("attendanceTitle").textContent =
+    group === "classmates" ? "CLASSMATES ATTENDANCE" : "TEACHER ATTENDANCE";
+
+  document.getElementById("attendanceDate").value =
+    new Date().toISOString().slice(0, 10);
+
+  document.getElementById("searchName").value = "";
+
+  document.getElementById("saveButton").style.display =
+    isAdmin() ? "inline-block" : "none";
+
+  if (isAdmin()) {
+    document.getElementById("attendanceRoleNote").textContent =
+      "Admin Mode: Click ✓ for Present or ✕ for Absent, then click Save Attendance.";
+  } else if (isTeacher()) {
+    document.getElementById("attendanceRoleNote").textContent =
+      "Teacher View-Only Mode: You are viewing attendance records.";
+  } else {
+    document.getElementById("attendanceRoleNote").textContent =
+      "Student View-Only Mode: You are viewing attendance records.";
+  }
+
+  updateResetTimerText();
+  renderAttendance();
+  showPage("attendancePage");
+}
+
+function renderPeople() {
+  if (!isAdmin()) return;
+
+  const group = document.getElementById("manageGroup").value;
+  const list = document.getElementById("peopleList");
+
+  list.innerHTML = "";
+
+  if (people[group].length === 0) {
+    list.innerHTML = "<p class='note'>No names saved in this group yet.</p>";
+    return;
+  }
+
+  people[group].forEach((name, index) => {
+    const row = document.createElement("div");
+    row.className = "person-row";
+
+    const nameText = document.createElement("span");
+    nameText.textContent = name;
+
+    const buttons = document.createElement("div");
+    buttons.className = "actions";
+
+    const edit = document.createElement("button");
+    edit.className = "gold small";
+    edit.textContent = "EDIT";
+    edit.onclick = () => editPerson(index);
+
+    const remove = document.createElement("button");
+    remove.className = "danger small";
+    remove.textContent = "DELETE";
+    remove.onclick = () => deletePerson(index);
+
+    buttons.append(edit, remove);
+    row.append(nameText, buttons);
+    list.appendChild(row);
+  });
+}
+
+function addPerson() {
+  if (!isAdmin()) {
+    alert("Only Admins can add names.");
+    return;
+  }
+
+  const group = document.getElementById("manageGroup").value;
+  const input = document.getElementById("newName");
+  const name = input.value.trim();
+
+  if (!name) {
+    alert("Please enter a name.");
+    return;
+  }
+
+  if (people[group].some(existing => existing.toLowerCase() === name.toLowerCase())) {
+    alert("That name is already in the list.");
+    return;
+  }
+
+  people[group].push(name);
+  input.value = "";
+  saveData();
+  renderPeople();
+}
+
+function editPerson(index) {
+  if (!isAdmin()) {
+    alert("Only Admins can edit names.");
+    return;
+  }
+
+  const group = document.getElementById("manageGroup").value;
+  const oldName = people[group][index];
+  const updated = prompt("Enter the new name:", oldName);
+
+  if (updated && updated.trim()) {
+    const trimmed = updated.trim();
+    people[group][index] = trimmed;
+
+    Object.keys(attendance).forEach(recordKey => {
+      if (recordKey.endsWith("_" + group) && oldName in attendance[recordKey]) {
+        attendance[recordKey][trimmed] = attendance[recordKey][oldName];
+        if (trimmed !== oldName) {
+          delete attendance[recordKey][oldName];
+        }
+      }
+    });
+
+    saveData();
+    renderPeople();
+  }
+}
+
+function deletePerson(index) {
+  if (!isAdmin()) {
+    alert("Only Admins can delete names.");
+    return;
+  }
+
+  const group = document.getElementById("manageGroup").value;
+
+  if (confirm(`Are you sure you want to delete "${people[group][index]}"?`)) {
+    people[group].splice(index, 1);
+    saveData();
+    renderPeople();
+  }
+}
+
+function resetDefaultNames() {
+  if (!isAdmin()) return;
+  if (confirm("Reset classmates and teachers back to the default sample names?")) {
+    people = JSON.parse(JSON.stringify(defaultPeople));
+    saveData();
+    renderPeople();
+  }
+}
+
+function renderAttendance() {
+  checkAttendanceExpiration();
+
+  const list = document.getElementById("attendanceList");
+  const search = document.getElementById("searchName").value.toLowerCase();
+  const date = document.getElementById("attendanceDate").value;
+
+  list.innerHTML = "";
+
+  const recordKey = date + "_" + currentGroup;
+  const saved = attendance[recordKey] || {};
+
+  people[currentGroup].forEach(name => {
+    if (!name.toLowerCase().includes(search)) return;
+
+    const row = document.createElement("div");
+    row.className = "person-row";
+
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "person-name";
+    nameSpan.textContent = name;
+
+    const controls = document.createElement("div");
+    controls.className = "attendance-controls";
+
+    let currentStatus = saved[name];
+    if (currentStatus === true) currentStatus = "present";
+    if (currentStatus === false) currentStatus = null;
+
+    const checkBtn = document.createElement("button");
+    checkBtn.type = "button";
+    checkBtn.className = "mini-box check-box" + (currentStatus === "present" ? " selected" : "");
+    checkBtn.textContent = "✓";
+    checkBtn.title = "Mark Present";
+    checkBtn.disabled = !isAdmin();
+
+    const xBtn = document.createElement("button");
+    xBtn.type = "button";
+    xBtn.className = "mini-box x-box" + (currentStatus === "absent" ? " selected" : "");
+    xBtn.textContent = "✕";
+    xBtn.title = "Mark Absent";
+    xBtn.disabled = !isAdmin();
+
+    const statusText = document.createElement("span");
+    statusText.className = "status-label";
+
+    function updateStatusDisplay(val) {
+      checkBtn.classList.toggle("selected", val === "present");
+      xBtn.classList.toggle("selected", val === "absent");
+
+      if (val === "present") {
+        statusText.textContent = "Present";
+        statusText.style.color = "#24864b";
+      } else if (val === "absent") {
+        statusText.textContent = "Absent";
+        statusText.style.color = "#b93242";
+      } else {
+        statusText.textContent = "Unmarked";
+        statusText.style.color = "#777";
+      }
+    }
+
+    updateStatusDisplay(currentStatus);
+
+    checkBtn.addEventListener("click", () => {
+      if (!isAdmin()) return;
+      saved[name] = saved[name] === "present" ? null : "present";
+      attendance[recordKey] = saved;
+      updateStatusDisplay(saved[name]);
+      saveData();
+      updateResetTimerText();
+    });
+
+    xBtn.addEventListener("click", () => {
+      if (!isAdmin()) return;
+      saved[name] = saved[name] === "absent" ? null : "absent";
+      attendance[recordKey] = saved;
+      updateStatusDisplay(saved[name]);
+      saveData();
+      updateResetTimerText();
+    });
+
+    controls.append(checkBtn, xBtn, statusText);
+    row.append(nameSpan, controls);
+    list.appendChild(row);
+  });
+
+  if (list.children.length === 0) {
+    list.textContent = "No names found.";
+  }
+}
+
+function saveAttendance() {
+  if (!isAdmin()) {
+    alert("Only Admins can save attendance.");
+    return;
+  }
+
+  const date = document.getElementById("attendanceDate").value;
+
+  if (!date) {
+    alert("Please select a date.");
+    return;
+  }
+
+  // Reset the 15-hour timer from the moment Save Attendance is clicked
+  localStorage.setItem("sis_attendance_timestamp", String(Date.now()));
+  saveData();
+  showPage("finishPage");
+}
+
+function backToDashboard() {
+  if (isAdmin()) showPage("adminDashboardPage");
+  else if (isTeacher()) showPage("teacherDashboardPage");
+  else if (isStudent()) showPage("studentDashboardPage");
+  else showPage("homePage");
+}
+
+function backToHome() {
+  currentUser = null;
+  document.getElementById("loginUsername").value = "";
+  document.getElementById("loginPassword").value = "";
+  showPage("homePage");
+}
+
+function backupData() {
+  if (!isAdmin()) return;
+
+  const backup = {
+    people: people,
+    users: users,
+    attendance: attendance
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(backup, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "student-information-backup.json";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function restoreData(event) {
+  if (!isAdmin()) return;
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+
+      if (!data.people || !data.users || !data.attendance ||
+          !Array.isArray(data.people.classmates) ||
+          !Array.isArray(data.people.teachers) ||
+          !Array.isArray(data.users)) {
+        throw new Error("Invalid backup file");
+      }
+
+      people = data.people;
+      users = data.users;
+      attendance = data.attendance;
+
+      localStorage.setItem("sis_attendance_timestamp", String(Date.now()));
+      saveData();
+      alert("Backup restored successfully!");
+    } catch (error) {
+      alert("The selected file is not a valid backup.");
+    }
+
+    event.target.value = "";
+  };
+
+  reader.readAsText(file);
+}
+</script>
+</head>
+
+<body>
+
+<header>
+  <h1>STUDENT INFORMATION SYSTEM</h1>
+  <p>Attendance and Student Records</p>
+</header>
+
+<!-- STARTING PAGE -->
+<section id="homePage" class="page active welcome">
+  <div class="welcome-card">
+    <h1>WELCOME!</h1>
+    <h2>Student Information System</h2>
+    <p>Manage student records and attendance in one place.</p>
+    <button class="primary start-button" onclick="showPage('loginPage')">
+      START
+    </button>
+  </div>
+</section>
+
+<!-- LOGIN PAGE -->
+<section id="loginPage" class="page">
+  <div class="panel center">
+    <h2>LOGIN</h2>
+
+    <label>Username</label>
+    <input id="loginUsername" placeholder="Enter username">
+
+    <label>Password</label>
+    <input id="loginPassword" type="password" placeholder="Enter password">
+
+    <button class="primary" onclick="login()">LOGIN</button>
+    <button class="gray" onclick="showPage('registerPage')">REGISTER</button>
+    <button class="gray" onclick="showPage('homePage')">BACK</button>
+
+    <p id="loginMessage" style="color:#b93242; font-weight:bold;"></p>
+
+    <hr>
+    <p class="note">
+      Demo accounts:<br>
+      <strong>Admin:</strong> admin / admin123 (Full control: manage names &amp; click ✓/✕)<br>
+      <strong>Teacher:</strong> teacher / teach123 (Teacher dashboard &amp; view records)<br>
+      <strong>Student:</strong> student / stud123 (Student dashboard &amp; view records)
+    </p>
+  </div>
+</section>
+
+<!-- REGISTRATION PAGE -->
+<section id="registerPage" class="page">
+  <div class="panel">
+    <h2 class="center">CREATE AN ACCOUNT</h2>
+
+    <label>Full Name</label>
+    <input id="regName" placeholder="Enter full name">
+
+    <label>Username</label>
+    <input id="regUsername" placeholder="Choose a username">
+
+    <label>Password</label>
+    <input id="regPassword" type="password" placeholder="Choose a password">
+
+    <button class="green" onclick="register()">REGISTER</button>
+    <button class="gray" onclick="showPage('loginPage')">BACK TO LOGIN</button>
+    <p id="registerMessage"></p>
+  </div>
+</section>
+
+<!-- ADMIN DASHBOARD -->
+<section id="adminDashboardPage" class="page">
+  <div class="panel">
+    <h2>ADMIN DASHBOARD</h2>
+    <p id="adminWelcomeUser"></p>
+
+    <div class="menu-buttons">
+      <button class="primary" onclick="openAttendance('classmates')">
+        CLASSMATES ATTENDANCE
+      </button>
+
+      <button class="green" onclick="openAttendance('teachers')">
+        TEACHER ATTENDANCE
+      </button>
+    </div>
+
+    <hr>
+    <h3>ADMINISTRATION</h3>
+    <div class="menu-buttons">
+      <button class="gold" onclick="openManagePage()">
+        MANAGE CLASSMATES &amp; TEACHERS
+      </button>
+      <button class="gray" onclick="backupData()">
+        BACKUP DATA
+      </button>
+      <button class="gray" onclick="document.getElementById('restoreFile').click()">
+        RESTORE BACKUP
+      </button>
+      <input id="restoreFile" type="file" accept=".json"
+        style="display:none" onchange="restoreData(event)">
+    </div>
+
+    <button class="danger" onclick="logout()">LOG OUT</button>
+  </div>
+</section>
+
+<!-- TEACHER DASHBOARD -->
+<section id="teacherDashboardPage" class="page">
+  <div class="panel">
+    <h2>TEACHER DASHBOARD</h2>
+    <p id="teacherWelcomeUser"></p>
+    <p class="note">Select which attendance sheet you would like to view:</p>
+
+    <div class="menu-buttons">
+      <button class="primary" onclick="openAttendance('classmates')">
+        STUDENT / CLASSMATES ATTENDANCE
+      </button>
+
+      <button class="green" onclick="openAttendance('teachers')">
+        TEACHER ATTENDANCE
+      </button>
+    </div>
+
+    <button class="danger" onclick="logout()">LOG OUT</button>
+  </div>
+</section>
+
+<!-- STUDENT DASHBOARD -->
+<section id="studentDashboardPage" class="page">
+  <div class="panel">
+    <h2>STUDENT DASHBOARD</h2>
+    <p id="studentWelcomeUser"></p>
+    <p class="note">Select which attendance record you would like to view:</p>
+
+    <div class="menu-buttons">
+      <button class="primary" onclick="openAttendance('classmates')">
+        CLASSMATES ATTENDANCE
+      </button>
+
+      <button class="green" onclick="openAttendance('teachers')">
+        TEACHER ATTENDANCE
+      </button>
+    </div>
+
+    <button class="danger" onclick="logout()">LOG OUT</button>
+  </div>
+</section>
+
+<!-- MANAGE NAMES PAGE: ONLY ADMIN CAN OPEN -->
+<section id="managePage" class="page">
+  <div class="panel">
+    <h2>MANAGE NAMES <span class="role-badge">Admin Only</span></h2>
+
+    <label>Choose a group</label>
+    <select id="manageGroup" onchange="renderPeople()">
+      <option value="classmates">Classmates</option>
+      <option value="teachers">Teachers</option>
+    </select>
+
+    <label>Add New Name</label>
+    <input id="newName" placeholder="Enter classmate or teacher name"
+      onkeydown="if(event.key==='Enter') addPerson()">
+
+    <button class="green" onclick="addPerson()">ADD NAME</button>
+    <button class="gray" onclick="resetDefaultNames()">RESET TO DEFAULT NAMES</button>
+
+    <hr>
+    <h3>Saved Names</h3>
+    <div id="peopleList"></div>
+
+    <br>
+    <button class="gray" onclick="backToDashboard()">
+      BACK TO DASHBOARD
+    </button>
+  </div>
+</section>
+
+<!-- ATTENDANCE PAGE -->
+<section id="attendancePage" class="page">
+  <div class="panel">
+    <h2 id="attendanceTitle">ATTENDANCE</h2>
+    <p id="attendanceRoleNote" class="note"></p>
+    <div id="resetTimerBanner" class="reset-timer-badge"></div>
+
+    <label>Date</label>
+    <input type="date" id="attendanceDate">
+
+    <label>Search name</label>
+    <input id="searchName" placeholder="Search..." oninput="renderAttendance()">
+
+    <div id="attendanceList"></div>
+
+    <p id="attendanceMessage"></p>
+
+    <button class="green" id="saveButton" onclick="saveAttendance()">
+      SAVE ATTENDANCE
+    </button>
+
+    <button class="gray" onclick="backToDashboard()">
+      BACK TO DASHBOARD
+    </button>
+  </div>
+</section>
+
+<!-- FINISHING PAGE -->
+<section id="finishPage" class="page welcome">
+  <div class="goodbye-card">
+    <h1>GOOD BYE!</h1>
+    <h2>Attendance Successfully Saved!</h2>
+    <p>Thank you for using the Student Information System.</p>
+
+    <button class="primary back-button" onclick="backToHome()">
+      BACK TO HOME
+    </button>
+  </div>
+</section>
+
+<script>
+saveData();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const attendanceDate = document.getElementById("attendanceDate");
+  if (attendanceDate) {
+    attendanceDate.addEventListener("change", renderAttendance);
+  }
+
+  // Check every minute if the 15-hour timer has expired while the page stays open
+  setInterval(() => {
+    if (checkAttendanceExpiration()) {
+      renderAttendance();
+    }
+    updateResetTimerText();
+  }, 60000);
+});
+</script>
+
+</body>
+</html>
